@@ -2,44 +2,61 @@
 import React, { useState, useEffect } from 'react';
 import * as XLSX from 'xlsx';
 
+interface Patient {
+  id?: number;
+  name: string;
+  age: string;
+  village: string;
+}
+
 export default function Home() {
-  const [entries, setEntries] = useState<Array<{ name: string; age: string; village: string }>>([]);
-  const [form, setForm] = useState({ name: '', age: '', village: '' });
+  const [entries, setEntries] = useState<Patient[]>([]);
+  const [form, setForm] = useState<Patient>({ name: '', age: '', village: '' });
   const [showData, setShowData] = useState(false);
   const [editIndex, setEditIndex] = useState<number | null>(null);
 
-  useEffect(() => {
-    // Load entries from localStorage on component mount
-    const storedEntries = localStorage.getItem('patientData');
-    if (storedEntries) {
-      setEntries(JSON.parse(storedEntries));
-    }
-  }, []);
-
-  useEffect(() => {
-    // Save entries to localStorage whenever the entries state updates
-    localStorage.setItem('patientData', JSON.stringify(entries));
-  }, [entries]);
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    if (name === 'age' && value.startsWith('-')) {
-      return; // Prevent negative age input
-    }
-    setForm({ ...form, [name]: value });
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (editIndex !== null) {
-      const updated = [...entries];
-      updated[editIndex] = form;
-      setEntries(updated);
-      setEditIndex(null);
-    } else {
-      setEntries([...entries, form]);
+  const fetchPatients = async () => {
+    try {
+      const response = await fetch('http://localhost:3001/api/patients'); // Full URL of your backend
+      if (response.ok) {
+        const data: Patient[] = await response.json();
+        setEntries(data);
+      } else {
+        console.error('Failed to fetch patients:', response.status);
+      }
+    } catch (error) {
+      console.error('Error fetching patients:', error);
     }
-    setForm({ name: '', age: '', village: '' });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const method = editIndex !== null ? 'PUT' : 'POST';
+    const url = editIndex !== null && entries[editIndex]?.id ? `http://localhost:3001/api/patients/${entries[editIndex].id}` : 'http://localhost:3001/api/patients';
+
+    try {
+      const response = await fetch(url, {
+        method: method,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(form),
+      });
+
+      if (response.ok) {
+        setForm({ name: '', age: '', village: '' });
+        setEditIndex(null);
+        fetchPatients(); // Refresh data after submission/update
+      } else {
+        console.error('Failed to submit/update data:', response.status);
+      }
+    } catch (error) {
+      console.error('Error submitting/updating data:', error);
+    }
   };
 
   const handleEdit = (index: number) => {
@@ -48,18 +65,34 @@ export default function Home() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const deleteEntry = (index: number) => {
-    const updated = [...entries];
-    updated.splice(index, 1);
-    setEntries(updated);
+  const deleteEntry = async (index: number) => {
+    const idToDelete = entries[index]?.id;
+    if (idToDelete) {
+      try {
+        const response = await fetch(`http://localhost:3001/api/patients/${idToDelete}`, {
+          method: 'DELETE',
+        });
+        if (response.ok) {
+          fetchPatients(); // Refresh data after deletion
+        } else {
+          console.error('Failed to delete entry:', response.status);
+        }
+      } catch (error) {
+        console.error('Error deleting entry:', error);
+      }
+    }
   };
 
   const downloadExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(entries);
+    const worksheet = XLSX.utils.json_to_sheet(entries.map(entry => ({ name: entry.name, age: entry.age, village: entry.village })));
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Patient Data");
     XLSX.writeFile(workbook, "Itakarlapalli_Data.xlsx");
   };
+
+  useEffect(() => {
+    fetchPatients();
+  }, []);
 
   return (
     <main style={{ padding: '2rem', fontFamily: 'Arial' }}>
