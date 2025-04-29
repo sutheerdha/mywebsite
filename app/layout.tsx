@@ -1,12 +1,13 @@
 import './globals.css';
-import Link from 'next/link';  // Make sure you have this import
+import Link from 'next/link';
+import { ReactNode } from 'react'; // Import ReactNode
 
 export const metadata = {
   title: 'Itakarlapalli Sub Centre',
   description: 'Healthcare Services for the Community',
 };
 
-export default function RootLayout({ children }) {
+export default function RootLayout({ children }: { children: ReactNode }) { // Add the type annotation here
   return (
     <html lang="en">
       <body className="flex flex-col min-h-screen">
@@ -30,18 +31,6 @@ export default function RootLayout({ children }) {
             <p>© {new Date().getFullYear()} Itakarlapalli Sub Centre. All rights reserved.</p>
           </div>
         </footer>
-      </body>
-    </html>
-  );
-}
-
-import { ReactNode } from 'react';
-
-export default function RootLayout({ children }: { children: ReactNode }) {
-  return (
-    <html lang="en">
-      <body className="flex flex-col min-h-screen">
-        {children}
       </body>
     </html>
   );
