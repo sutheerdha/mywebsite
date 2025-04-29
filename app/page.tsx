@@ -2,9 +2,15 @@
 import React, { useState } from 'react';
 import * as XLSX from 'xlsx';
 
+type Entry = {
+  name: string;
+  age: string;
+  village: string;
+};
+
 export default function Home() {
-  const [entries, setEntries] = useState([]);
-  const [form, setForm] = useState({ name: '', age: '', village: '' });
+  const [entries, setEntries] = useState<Entry[]>([]);
+  const [form, setForm] = useState<Entry>({ name: '', age: '', village: '' });
   const [showData, setShowData] = useState(false);
   const [editIndex, setEditIndex] = useState<number | null>(null);
 
