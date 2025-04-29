@@ -18,7 +18,8 @@ export default function Home() {
     e.preventDefault();
     if (editIndex !== null) {
       const updated = [...entries];
-      updated[editIndex] = form;
+      // Explicitly tell TypeScript that updated[editIndex] will be an Entry
+      updated[editIndex] = form as Entry;
       setEntries(updated);
       setEditIndex(null);
     } else {
@@ -51,7 +52,7 @@ export default function Home() {
         marginBottom: '2rem'
       }}>
         <input type="text" name="name" placeholder="Name" value={form.name} onChange={handleChange} required />
-        <input type="number" name="age" placeholder="Age" value={form.age} onChange={handleChange} required min="0" />
+        <input type="number" name="age" placeholder="Age" value={form.age} onChange={handleChange} required />
         <input type="text" name="village" placeholder="Village" value={form.village} onChange={handleChange} required />
         <button type="submit" style={{
           padding: '10px',
