@@ -12,9 +12,9 @@ export default function Contact() {
               <p>Itakarlapalli Sub Centre</p>
               <p>Near Panchayat Office</p>
               <p>Itakarlapalli Village</p>
-              <p>Mandal: [Your Mandal]</p>
-              <p>District: [Your District]</p>
-              <p>State: [Your State] - [Pincode]</p>
+              <p>Mandal: Cheepurupalle</p>
+              <p>District: Vizianagaram</p>
+              <p>State: Andhra Pradesh - 535125</p>
             </div>
             
             <div>
