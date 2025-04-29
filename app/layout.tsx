@@ -1,13 +1,13 @@
 import './globals.css';
 import Link from 'next/link';
-import { ReactNode } from 'react'; // Import ReactNode
+import { ReactNode } from 'react';
 
 export const metadata = {
   title: 'Itakarlapalli Sub Centre',
   description: 'Healthcare Services for the Community',
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) { // Add the type annotation here
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body className="flex flex-col min-h-screen">
