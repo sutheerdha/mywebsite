@@ -1,7 +1,11 @@
-import type { NextConfig } from "next";
+import { ReactNode } from 'react';
 
-const nextConfig: NextConfig = {
-  /* config options here */
-};
-
-export default nextConfig;
+export default function RootLayout({ children }: { children: ReactNode }) {
+  return (
+    <html lang="en">
+      <body className="flex flex-col min-h-screen">
+        {children}
+      </body>
+    </html>
+  );
+}
