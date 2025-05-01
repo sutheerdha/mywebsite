@@ -40,8 +40,12 @@ export default function Home() {
             }
             const data: Patient[] = await response.json();
             setEntries(data);
-        } catch (error: any) {
-            setError(error.message);
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                setError(error.message);
+            } else {
+                setError('Unknown error occurred while fetching patients.');
+            }
         } finally {
             setLoading(false);
         }
@@ -69,18 +73,24 @@ export default function Home() {
                 let errorMessage = `Failed to ${method === 'PUT' ? 'update' : 'submit'} data: ${response.status}`;
                 try {
                     const errorData = await response.json();
-                    if (errorData?.error) {
+                    if (errorData && errorData.error) {
                         errorMessage += ` - ${errorData.error}`;
                     }
-                } catch {}
+                } catch {
+                    // Ignore JSON parse error
+                }
                 throw new Error(errorMessage);
             }
 
             setForm({ name: '', age: '', village: '' });
             setEditIndex(null);
             await fetchPatients();
-        } catch (error: any) {
-            setError(error.message);
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                setError(error.message);
+            } else {
+                setError('Unknown error occurred during form submission.');
+            }
         } finally {
             setLoading(false);
         }
@@ -106,8 +116,12 @@ export default function Home() {
                 throw new Error(`Failed to delete entry: ${response.status} ${response.statusText}`);
             }
             await fetchPatients();
-        } catch (error: any) {
-            setError(error.message);
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                setError(error.message);
+            } else {
+                setError('Unknown error occurred during deletion.');
+            }
         } finally {
             setLoading(false);
         }
@@ -131,7 +145,10 @@ export default function Home() {
             <h1 style={{ fontSize: '2rem', marginBottom: '1rem' }}>Welcome to Itakarlapalli Sub Centre</h1>
             <p style={{ marginBottom: '2rem' }}>Healthcare Services for the Community</p>
 
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxWidth: '400px', marginBottom: '2rem' }}>
+            <form onSubmit={handleSubmit} style={{
+                display: 'flex', flexDirection: 'column', gap: '10px', maxWidth: '400px',
+                marginBottom: '2rem'
+            }}>
                 <input type="text" name="name" placeholder="Name" value={form.name} onChange={handleChange} required />
                 <input type="number" name="age" placeholder="Age" value={form.age} onChange={handleChange} required />
                 {ageError && <p style={{ color: 'red' }}>{ageError}</p>}
