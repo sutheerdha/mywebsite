@@ -10,11 +10,11 @@ interface Patient {
   village: string;
 }
 
-interface Props {
+interface PDFDownloaderProps {
   entries: Patient[];
 }
 
-const PDFDownloader: React.FC<Props> = ({ entries }) => {
+const PDFDownloader: React.FC<PDFDownloaderProps> = ({ entries }) => {
   const downloadPDF = () => {
     const doc = new jsPDF();
     autoTable(doc, {
@@ -25,15 +25,18 @@ const PDFDownloader: React.FC<Props> = ({ entries }) => {
   };
 
   return (
-    <button onClick={downloadPDF} style={{
-      marginLeft: '1rem',
-      padding: '8px 16px',
-      background: '#dc3545',
-      color: 'white',
-      border: 'none',
-      borderRadius: '5px',
-      cursor: 'pointer'
-    }}>
+    <button
+      onClick={downloadPDF}
+      style={{
+        marginLeft: '1rem',
+        padding: '8px 16px',
+        background: '#dc3545',
+        color: 'white',
+        border: 'none',
+        borderRadius: '5px',
+        cursor: 'pointer',
+      }}
+    >
       Download PDF
     </button>
   );
